@@ -10,6 +10,6 @@ public class SilverUser extends DatabaseUser {
 
     @Override
     public double cashback(double total) {
-        return 0;
+        return total * 0.05;
     }
 }
