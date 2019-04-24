@@ -64,6 +64,14 @@ public class BioskopSystem {
         }
         return true;
     }
+    public boolean passcondition(String password) throws PasswordException{
+        if (password.length() < 8){
+            throw new PasswordException();
+        }else {
+            return true;
+        }
+    }
+
     public void tranksaksi(double jumlah){
         Accounts.get(id).topup(jumlah);
     }
@@ -168,4 +176,20 @@ public class BioskopSystem {
         String seat = seatid + column;
         Accounts.get(id).order(film - 1, seat);
     }
+
+    public void seatkita(int film) throws  NoFilmException,WrongInputException{
+        if (film - 1 < 0 || film - 1 >= studio.length) {
+            throw new WrongInputException();
+        }
+
+        if (Accounts.get(id).OwnTix().get(film - 1).isEmpty()) {
+            throw new NoFilmException(studio[film - 1].getFilmName());
+        }
+
+        System.out.println(studio[film - 1].getFilmName());
+        for (int j = 0; j < Accounts.get(id).OwnTix().get(film - 1).size(); j++) {
+            System.out.println((j + 1) + ". " + Accounts.get(id).OwnTix().get(film - 1).get(j));
+        }
+    }
+
 }
