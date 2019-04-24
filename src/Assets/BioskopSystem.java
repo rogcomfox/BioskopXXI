@@ -92,6 +92,72 @@ public class BioskopSystem {
         if (i - 1 < 0 || i > studio.length){
             throw new WrongInputException();
         }
-        System.out.println();
+        System.out.println(studio[i-1].getFilmName());
+        System.out.println("1 2 3 4 5");
+        for (int j = 0; j < 5; j++){
+            switch (j){
+                case 0:
+                    System.out.print("A");
+                    break;
+                case 1:
+                    System.out.print("B");
+                    break;
+                case 2:
+                    System.out.print("C");
+                    break;
+                case 3:
+                    System.out.print("D");
+                    break;
+                case 4:
+                    System.out.print("E");
+                    break;
+                default:
+                    System.out.print("Tidak Ada");
+                    break;
+            }
+            for (int k = 0; k < 5; k++) {
+                if (!studio[i - 1].seat.get(0)[j][k]) {
+                    System.out.print(" V");
+                } else {
+                    System.out.print(" X");
+                }
+            }
+            System.out.println();
+        }
+        System.out.println("---LAYAR---");
+    }
+    public void displayfilm(){
+        for (int i = 0; i < studio.length; i++){
+            System.out.print((i+1) + ". " + studio[i].getFilmName());
+        }
+        System.out.println("----------------------------------");
+    }
+    public String seatresult(int row) throws WrongInputException{
+        if (row < 1 || row > 5){
+            throw  new WrongInputException();
+        }
+        String hasil = null;
+
+        switch (row){
+            case 1:
+                hasil = "A";
+                break;
+            case 2:
+                hasil = "B";
+                break;
+            case 3:
+                hasil = "C";
+                break;
+            case 4:
+                hasil = "D";
+                break;
+            case 5:
+                hasil = "E";
+                break;
+            default:
+                System.out.println("Tidak Ada");
+                break;
+        }
+        return hasil;
     }
 }
