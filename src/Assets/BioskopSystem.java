@@ -160,4 +160,12 @@ public class BioskopSystem {
         }
         return hasil;
     }
+    public void pesanseat(int film, int row, int column, String seatid) throws BookFailException{
+        if (studio[film - 1].seat.get(0)[row - 1][column - 1]){
+            throw new BookFailException(seatid, row);
+        }
+        studio[film - 1].seat.get(0)[row - 1][column - 1] = true;
+        String seat = seatid + column;
+        Accounts.get(id).order(film - 1, seat);
+    }
 }
