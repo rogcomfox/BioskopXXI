@@ -2,13 +2,18 @@ package Assets;
 
 import Bioskop.DatabaseUser;
 
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class BioskopSystem {
     private int id;
 
-    ArrayList<DatabaseUser> Accounts = new ArrayList<>();
-    StudioBioskop studio[] = new StudioBioskop[4];
+    private ArrayList<DatabaseUser> Accounts = new ArrayList<>();
+    private StudioBioskop[] studio = new StudioBioskop[4];
 
     public BioskopSystem(){
         studio[0] = new StudioBioskop("Fast and Furious 8");
@@ -191,5 +196,73 @@ public class BioskopSystem {
             System.out.println((j + 1) + ". " + Accounts.get(id).OwnTix().get(film - 1).get(j));
         }
     }
+    public void batalseat(int film, int pil) throws WrongInputException{
+        if (pil - 1 < 0 || pil - 1 > Accounts.get(id).OwnTix().get(film - 1).size()) {
+            throw new WrongInputException();
+        }
 
+        String seatid = Accounts.get(id).OwnTix().get(film - 1).get(pil - 1);
+        int index0 = index0seat(seatid);
+        int index1 = index1seat(seatid);
+
+        studio[film - 1].seat.get(0)[index0][index1] = false;
+        Accounts.get(id).OwnTix().get(film - 1).remove(pil - 1);
+    }
+    public int index0seat(String a) {
+        char index0 = a.charAt(0);
+        int hasil = 0;
+
+        switch (index0) {
+            case 'A':
+                hasil = 0;
+                break;
+            case 'B':
+                hasil = 1;
+                break;
+            case 'C':
+                hasil = 2;
+                break;
+            case 'D':
+                hasil = 3;
+                break;
+            case 'E':
+                hasil = 4;
+                break;
+        }
+        return hasil;
+    }
+    public int index1seat(String a) {
+        int index1seat = Character.getNumericValue(a.charAt(1));
+
+        return index1seat - 1;
+    }
+
+    public void cetakTiket() throws IOException, PrintException {
+        String judul = null, seat = null;
+        int poin = 0;
+
+        for (int i = 0; i < studio.length; i++) {
+            if (Accounts.get(id).OwnTix().get(i).isEmpty()) {
+                poin++;
+            }
+        }
+
+        if (poin >= studio.length) {
+            throw new PrintException();
+        }
+
+        for (int i = 0; i < studio.length; i++) {
+            if (!Accounts.get(id).OwnTix().get(i).isEmpty())
+                judul = studio[i].getFilmName();
+
+            for (int j = 0; j < Accounts.get(id).OwnTix().get(i).size(); j++) {
+                seat = Accounts.get(id).OwnTix().get(i).get(j);
+                assert judul != null;
+                try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("D:\\Cetak Hasil\\" + judul.substring(0, 2) + "_eTicket(" + seat + ").txt"), StandardCharsets.UTF_8))) {
+                    bw.write("Tiket Bioskop XXI | " + judul + " | " + seat + " | " + Accounts.get(id).getUsername()+ " | " + Accounts.get(id).getAccount());
+                }
+
+            }
+        }
+    }
 }
