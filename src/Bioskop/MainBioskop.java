@@ -162,8 +162,47 @@ public class MainBioskop {
                 System.out.print("Masukkan Pilihan = ");
                 int row = in.nextByte();
                 System.out.println("---------------------------------");
+
+                try {
+                    seatid = sistem.seatresult(row);
+                    sistem.tampilseat(film);
+                } catch (WrongInputException e) {
+                    System.out.println("\n"+e+"\n");
+                }
+
+                System.out.println("Silahkan Pilih Kolom ");
+                System.out.println("1. Kolom 1");
+                System.out.println("2. Kolom 2");
+                System.out.println("3. Kolom 3");
+                System.out.println("4. Kolom 4");
+                System.out.println("5. Kolom 5");
+                int column = in.nextByte();
+
+                try {
+                    sistem.seatresult(column);
+                } catch (WrongInputException w) {
+                    System.out.println("\n"+w+"\n");
+                }
+                System.out.printf("Mohon Konfirmasi Pesanan Anda: %s row %s dengan tiket %d, Apakah Sudah Benar? ", seatid, column, i);
+                System.out.println("1. Benar");
+                System.out.println("2. Salah");
+                int jawab = in.nextByte();
+                switch (jawab){
+                    case 2:
+                        pickseat(in, sistem, ticket);
+                    case 1:
+                        try {
+                            sistem.pesanseat(film, row, column, seatid);
+                        } catch (BookFailException bf) {
+                            System.out.println("---------------------------------"+bf+"---------------------------------");
+                            i--;
+                        break;
+                }
             }
         }
+            System.out.printf("\nAnda Mendapat Cashback Sebesar Rp %.0f " , sistem.cashback(20000 * ticket));
+            sistem.tranksaksi(-((20000 * ticket) - sistem.cashback(20000 * ticket)));
+            return;
     }
 
     private static void MenuTopup(Scanner in, BioskopSystem sistem) {
