@@ -22,7 +22,7 @@ public class BioskopSystem {
         studio[3] = new StudioBioskop("The Conjuring");
     }
 
-    public boolean login(String username, String password) throws UsernameException, BannedException{
+    public void login(String username, String password) throws UsernameException, BannedException{
         int point = 0;
 
         //mengecek apakah ada akun yang terdaftar atau tidak
@@ -44,7 +44,6 @@ public class BioskopSystem {
         }
         //Jika tidak ada kesalahan, program akan merun statement berikut
         Accounts.get(id).resetPassword();
-        return true;
     }
     public void SignUp(String username, String password, double TopUp){
         if (TopUp >= 10000 &&  TopUp < 20000){
@@ -57,7 +56,7 @@ public class BioskopSystem {
             Accounts.add(new PlatinumUser(username, password, "Platinum", TopUp, studio.length));
         }
     }
-    public boolean available(String username)throws UsernameException{
+    public void available(String username)throws UsernameException{
         int poin = 0;
         for (DatabaseUser account : Accounts) {
             if (account.getUsername().compareTo(username) == 0) {
@@ -67,36 +66,29 @@ public class BioskopSystem {
         if (poin != 0){
             throw new UsernameException(username);
         }
-        return true;
     }
-    public boolean passcondition(String password) throws PasswordException{
+    public void passcondition(String password) throws PasswordException{
         if (password.length() < 8){
             throw new PasswordException();
-        }else {
-            return true;
         }
     }
 
     public void tranksaksi(double jumlah){
         Accounts.get(id).topup(jumlah);
     }
-    public boolean TopUpAbove(double TopUp) throws TopUpMinimumException{
+    public void TopUpAbove(double TopUp) throws TopUpMinimumException{
         if (TopUp < 10000){
             throw new TopUpMinimumException();
-        }else {
-            return true;
         }
     }
-    public String display(){
-        return (Accounts.get(id).toString());
+    public void display(){
+        Accounts.get(id).toString();
     }
     public double cashback(double jumlah){
         return Accounts.get(id).cashback(jumlah);
     }
-    public boolean balanceenough(int ticket) throws BalanceNotEnoughException{
-        if (Accounts.get(id).getBalance() >= ticket * 20000){
-            return true;
-        }else{
+    public void balanceenough(int ticket) throws BalanceNotEnoughException{
+        if (Accounts.get(id).getBalance() <= ticket * 20000){
             throw new BalanceNotEnoughException(Accounts.get(id).getBalance(), ticket);
         }
     }
@@ -208,7 +200,7 @@ public class BioskopSystem {
         studio[film - 1].seat.get(0)[index0][index1] = false;
         Accounts.get(id).OwnTix().get(film - 1).remove(pil - 1);
     }
-    public int index0seat(String a) {
+    private int index0seat(String a) {
         char index0 = a.charAt(0);
         int hasil = 0;
 
@@ -231,14 +223,14 @@ public class BioskopSystem {
         }
         return hasil;
     }
-    public int index1seat(String a) {
+    private int index1seat(String a) {
         int index1seat = Character.getNumericValue(a.charAt(1));
 
         return index1seat - 1;
     }
 
     public void cetakTiket() throws IOException, PrintException {
-        String judul = null, seat = null;
+        String judul = null, seat;
         int poin = 0;
 
         for (int i = 0; i < studio.length; i++) {

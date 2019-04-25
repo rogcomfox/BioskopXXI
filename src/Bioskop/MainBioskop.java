@@ -2,6 +2,7 @@ package Bioskop;
 
 import Assets.*;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class MainBioskop {
@@ -112,15 +113,68 @@ public class MainBioskop {
                     }
                 case 2: jumlahtiket(in ,sistem);break;
                 case 3: bataltiket(in, sistem);break;
-                case 4: cetaktiket(in, sistem);break;
+                case 4: cetaktiket(sistem);break;
             }
         } while (pil != 5);
     }
 
-    private static void cetaktiket(Scanner in, BioskopSystem sistem) {
+    private static void MenuTopup(Scanner in, BioskopSystem sistem) {
+        System.out.print("Masukkan Nominal Top Up = ");
+        double jumlah = in.nextDouble();
+
+        try {
+            sistem.TopUpAbove(jumlah);
+        } catch (TopUpMinimumException t){
+            System.out.println("\n"+t);
+        }
+        System.out.println("Berhasil!");
+        System.out.println();
+    }
+
+    private static void cetaktiket(BioskopSystem sistem) {
+        try {
+            sistem.cetakTiket();
+        } catch (IOException | PrintException io) {
+            System.out.println(io);
+            return;
+        }
+        System.out.println("...Mencetak Tiket...");
     }
 
     private static void bataltiket(Scanner in, BioskopSystem sistem) {
+        sistem.displayfilm();
+        System.out.print("Input: ");
+        int film = in.nextInt();
+        System.out.println("---------------------------------");
+
+        try {
+            sistem.seatkita(film);
+        } catch (WrongInputException| NoFilmException me) {
+            System.out.println(me);
+            return;
+        }
+
+        System.out.print("Pilih Tiket yang Akan Dibatalkan : ");
+        int pil = in.nextInt();
+
+        System.out.println("Peringatan, Saldo Anda Hanya dapat dikembalikan 90 % saja, melanjutkan ?");
+        System.out.println("1. Ya");
+        System.out.println("2. Tidak");
+        System.out.println("Masukkan Pilihan = ");
+        int sure = in.nextInt();
+        switch (sure){
+            case 1:
+            try {
+                sistem.batalseat(film ,pil);
+            } catch (WrongInputException w){
+                System.out.println("\n"+w+"\n");
+            }
+            sistem.tranksaksi((20000 * 9) / 10);
+            break;
+            case 2:
+                MainMenu(in, sistem);break;
+        }
+
     }
 
     private static void jumlahtiket(Scanner in, BioskopSystem sistem) {
@@ -142,17 +196,17 @@ public class MainBioskop {
         int film = in.nextByte();
         System.out.println("------------------------------------");
         String seatid = "";
-        for(int i = 0; i <= ticket; i++){
+        for (int i = 0; i <= ticket; i++) {
             yes = false;
 
-            while (!yes){
+            while (!yes) {
                 try {
                     sistem.tampilseat(film);
-                } catch (WrongInputException w){
-                    System.out.println("\n"+w+"\n");
+                } catch (WrongInputException w) {
+                    System.out.println("\n" + w + "\n");
                 }
 
-                System.out.println("Ticket "+i+" Pilih Baris:");
+                System.out.println("Ticket " + i + " Pilih Baris:");
                 System.out.println("1. Baris A");
                 System.out.println("2, Baris B");
                 System.out.println("3. Baris C");
@@ -167,7 +221,7 @@ public class MainBioskop {
                     seatid = sistem.seatresult(row);
                     sistem.tampilseat(film);
                 } catch (WrongInputException e) {
-                    System.out.println("\n"+e+"\n");
+                    System.out.println("\n" + e + "\n");
                 }
 
                 System.out.println("Silahkan Pilih Kolom ");
@@ -181,41 +235,28 @@ public class MainBioskop {
                 try {
                     sistem.seatresult(column);
                 } catch (WrongInputException w) {
-                    System.out.println("\n"+w+"\n");
+                    System.out.println("\n" + w + "\n");
                 }
                 System.out.printf("Mohon Konfirmasi Pesanan Anda: %s row %s dengan tiket %d, Apakah Sudah Benar? ", seatid, column, i);
                 System.out.println("1. Benar");
                 System.out.println("2. Salah");
                 int jawab = in.nextByte();
-                switch (jawab){
+                switch (jawab) {
                     case 2:
                         pickseat(in, sistem, ticket);
                     case 1:
                         try {
                             sistem.pesanseat(film, row, column, seatid);
                         } catch (BookFailException bf) {
-                            System.out.println("---------------------------------"+bf+"---------------------------------");
+                            System.out.println("---------------------------------" + bf + "---------------------------------");
                             i--;
-                        break;
+                            break;
+                        }
                 }
             }
-        }
-            System.out.printf("\nAnda Mendapat Cashback Sebesar Rp %.0f " , sistem.cashback(20000 * ticket));
+            System.out.printf("\nAnda Mendapat Cashback Sebesar Rp %.0f ", sistem.cashback(20000 * ticket));
             sistem.tranksaksi(-((20000 * ticket) - sistem.cashback(20000 * ticket)));
             return;
-    }
-
-    private static void MenuTopup(Scanner in, BioskopSystem sistem) {
-        System.out.print("Masukkan Nominal Top Up = ");
-        double jumlah = in.nextDouble();
-
-        try {
-            sistem.TopUpAbove(jumlah);
-        } catch (TopUpMinimumException t){
-            System.out.println("\n"+t);
         }
-        System.out.println("Berhasil!");
-        System.out.println();
     }
-
 }
